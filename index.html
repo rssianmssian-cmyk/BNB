@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="sq">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080d19">
+  <meta name="description" content="QLE — skaner live, vetëm-lexim, për kontratat Binance USDⓈ-M USDT perpetual.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="QLE Scanner">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>QLE — USDⓈ-M Futures Market Scanner</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="QLE kryefaqja"><span class="logo">Q</span><span><strong>QLE</strong><small>USDⓈ-M FUTURES · READ ONLY</small></span></a>
+    <div class="top-right"><span id="connection" class="status"><i></i> Duke u lidhur me Binance…</span><button id="installBtn" class="button secondary hidden" type="button">Instalo</button></div>
+  </header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">BINANCE USDⓈ-M · TË DHËNA PUBLIKE LIVE</p><h1>Një treg i tërë.<br><em>Asnjë urdhër real.</em></h1><p class="muted">Kontrata aktive USDT perpetual · çmime, funding, likuidime, open interest, indikatorë dhe lajme.</p></div>
+      <div class="hero-state"><strong id="contractCount">—</strong><span>kontrata aktive</span><small id="updatedAt">Në pritje të të dhënave…</small></div>
+    </section>
+
+    <section class="overview-grid">
+      <article class="panel metric"><span>Kontrata USDT perpetual</span><strong id="activeCount">—</strong><small>Binance · TRADING</small></article>
+      <article class="panel metric"><span>Qarkullimi 24h</span><strong id="totalVolume">—</strong><small>USDT · universi i ngarkuar</small></article>
+      <article class="panel metric"><span>Funding median</span><strong id="medianFunding">—</strong><small>Norma e radhës · jo rekomandim</small></article>
+      <article class="panel metric"><span>Likuidime të kapura</span><strong id="liquidationCount">0</strong><small id="liquidationWindow">Rrjedha publike live</small></article>
+    </section>
+
+    <section class="panel demo-panel">
+      <div class="panel-head">
+        <div><p class="eyebrow">DEMO TRADING</p><h2>Simulimi me 50$</h2></div>
+        <div class="paper-controls"><label for="demoLeverage">Leverage demo</label><select id="demoLeverage"><option value="5">5x</option><option value="10">10x</option><option value="20">20x</option><option value="50">50x</option><option value="100">100x</option></select><button id="demoAutoToggle" class="button secondary" type="button">Ndal auto demo</button></div>
+      </div>
+      <div class="demo-grid">
+        <div class="demo-metric"><span>Balance</span><strong id="demoBalance">$50.00</strong></div>
+        <div class="demo-metric"><span>Equity</span><strong id="demoEquity">$50.00</strong></div>
+        <div class="demo-metric"><span>Open position</span><strong id="demoPosition">None</strong></div>
+        <div class="demo-metric"><span>PnL total neto</span><strong id="demoPnL">$0.00</strong></div>
+        <div class="demo-metric"><span>Trades</span><strong id="demoTrades">0</strong></div>
+        <div class="demo-metric"><span>Margin demo</span><strong id="demoRisk">0/3 pozicione</strong></div>
+      </div>
+      <p class="paper-disclaimer">Simulim lokal me $50 dhe cross-margin të emuluar. Skanon sinjalet e momentumit në kontratat live; nuk përdor API keys dhe nuk dërgon asnjë urdhër te Binance. Leverage 5x–100x është vetëm për simulim.</p>
+      <div class="paper-lists"><div><h3>Pozicionet demo</h3><div id="demoOpenPositions" class="paper-list"><p class="muted">Duke pritur Binance…</p></div></div><div><h3>Historiku i urdhrave virtualë</h3><div id="demoOrderHistory" class="paper-list"><p class="muted">Ende pa urdhra virtualë.</p></div></div></div>
+    </section>
+
+    <section class="panel scanner-panel">
+      <div class="panel-head scanner-head">
+        <div><p class="eyebrow">MARKET SCANNER</p><h2>Të gjitha kontratat e listuara</h2></div>
+        <div class="scanner-controls">
+          <label class="sr-only" for="marketSearch">Kërko kontratë</label><input id="marketSearch" type="search" placeholder="Kërko simbolin…">
+          <label class="sr-only" for="sortBy">Rendit sipas</label><select id="sortBy"><option value="volume">Qarkullimi 24h</option><option value="change">Ndryshimi 24h</option><option value="funding">Funding</option><option value="symbol">Simboli</option></select>
+        </div>
+      </div>
+      <p id="scannerStatus" class="small muted">Duke ngarkuar universin e kontratave…</p>
+      <div class="table-wrap"><table class="market-table"><thead><tr><th>Kontrata</th><th>Çmimi</th><th>24h</th><th>Funding</th><th>Open interest</th><th>Qarkullimi 24h</th></tr></thead><tbody id="marketRows"><tr><td colspan="6" class="muted">Duke pritur Binance…</td></tr></tbody></table></div>
+    </section>
+
+    <section class="grid detail-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">KONTRATA E ZGJEDHUR</p><h2 id="detailTitle">BTCUSDT</h2></div>
+          <label class="interval-control"><span>Korniza</span><select id="interval"><option>1m</option><option>3m</option><option selected>5m</option><option>15m</option><option>30m</option><option>1h</option><option>4h</option><option>1d</option></select></label>
+        </div>
+        <div class="detail-price"><strong id="detailPrice">—</strong><span id="detailChange" class="muted">—</span><span id="markPrice" class="muted">Mark —</span></div>
+        <p id="detailStatus" class="small muted">Zgjidh një kontratë për të ngarkuar analizën e saj.</p>
+        <div class="data-grid">
+          <div><span>Funding i radhës</span><strong id="detailFunding">—</strong></div>
+          <div><span>Open interest</span><strong id="detailOI">—</strong></div>
+          <div><span>Spread top-of-book</span><strong id="detailSpread">—</strong></div>
+          <div><span>Imbalance top 20</span><strong id="detailImbalance">—</strong></div>
+          <div><span>Long/short llogari</span><strong id="detailAccounts">—</strong></div>
+          <div><span>Taker buy/sell</span><strong id="detailTaker">—</strong></div>
+        </div>
+        <div class="divider"></div>
+        <h3>Indikatorët teknikë · OHLCV Binance</h3>
+        <div class="indicator-grid">
+          <div><span>RSI · 14</span><strong id="indRsi">—</strong></div><div><span>MACD · 12/26/9</span><strong id="indMacd">—</strong></div>
+          <div><span>EMA · 9 / 20</span><strong id="indEmaShort">—</strong></div><div><span>EMA · 50 / 200</span><strong id="indEmaLong">—</strong></div>
+          <div><span>ATR · 14</span><strong id="indAtr">—</strong></div><div><span>ADX · 14</span><strong id="indAdx">—</strong></div>
+          <div><span>Bollinger · 20</span><strong id="indBollinger">—</strong></div><div><span>Stochastic · 14</span><strong id="indStoch">—</strong></div>
+          <div><span>VWAP · qirinjtë e ngarkuar</span><strong id="indVwap">—</strong></div><div><span>Taker buy/sell · qirinjtë</span><strong id="indVolumeRatio">—</strong></div>
+        </div>
+        <div class="divider"></div>
+        <div class="panel-head"><div><p class="eyebrow">QLE · HEURISTIKË EKSPERIMENTALE</p><h3>Analiza e lidhur me tregun</h3></div><span class="pill">Jo sinjal financiar</span></div>
+        <div class="qle-row"><div class="signal-ring" id="signalRing"><div><strong id="signalText">WAIT</strong><span id="signalSub">Në pritje</span></div></div><div class="qle-metrics"><span>QLE score <strong id="qleScore">—</strong></span><span>Besueshmëria <strong id="confidence">—</strong></span><span>Boolean Sphere <strong id="sphereState">—</strong></span><span>Boundary 7 <strong id="boundary">—</strong></span><span>O369 energy / frequency / vibration <strong id="energy">—</strong></span></div></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><div><p class="eyebrow">ORDER BOOK</p><h2>Top 10 nivele</h2></div><span class="small muted">REST · kontrata e zgjedhur</span></div>
+        <div class="book-columns"><div><h3 class="buy-text">BID · Blerës</h3><div id="bids" class="book-list"><p class="muted">—</p></div></div><div><h3 class="sell-text">ASK · Shitës</h3><div id="asks" class="book-list"><p class="muted">—</p></div></div></div>
+        <p class="footnote">Order book-u është fotografi REST kur zgjidhet kontrata; nuk pretendon replay historik ose likuiditet të fshehur.</p>
+        <div class="divider"></div><h3>Historiku i fundit i funding</h3><div id="fundingHistory" class="funding-list"><p class="muted">—</p></div>
+      </article>
+    </section>
+
+    <section class="grid lower-grid">
+      <article class="panel"><div class="panel-head"><div><p class="eyebrow">KAPJE PUBLIKE</p><h2>Likuidimet e fundit</h2></div><span id="liquidationStatus" class="small muted">Në pritje të rrjedhës…</span></div><div id="liquidations" class="event-list"><p class="muted">Rrjedha e likuidimeve Binance është publike dhe e agreguar.</p></div><p class="footnote">Rrjedha e likuidimeve nuk është regjistër i plotë i çdo likuidimi; Binance transmeton ngjarjet sipas kufizimeve të feed-it.</p></article>
+      <article class="panel"><div class="panel-head"><div><p class="eyebrow">LAJME · RSS PUBLIK</p><h2>Ngjarjet e tregut</h2></div><span id="newsUpdated" class="small muted">Duke ngarkuar…</span></div><div id="newsSources" class="source-status"></div><div id="newsList" class="news-list"><p class="muted">Duke marrë titujt…</p></div><p class="footnote">Titujt vijnë nga RSS publike të CoinDesk dhe Cointelegraph; lajmet mund të vonohen ose burimet të mos jenë të disponueshme.</p></article>
+    </section>
+
+    <footer><span>QLE · USDⓈ-M market-data terminal · read-only</span><span id="dataDisclaimer">Asnjë API key nuk dërgohet në shfletues · asnjë urdhër nuk vendoset</span></footer>
+  </main>
+  <dialog id="installHelp" class="install-dialog" aria-labelledby="installHelpTitle">
+    <form method="dialog"><button class="dialog-close" aria-label="Mbyll udhëzimet">×</button></form>
+    <p class="eyebrow">INSTALIM NË IPHONE</p>
+    <h2 id="installHelpTitle">Shto QLE në ekranin kryesor</h2>
+    <ol>
+      <li>Hape këtë faqe në <strong>Safari</strong>.</li>
+      <li>Shtyp ikonën <strong>Share</strong> <span aria-label="ndarje">↑</span> në shiritin e Safari-t.</li>
+      <li>Zgjidh <strong>Add to Home Screen</strong> (Shto në ekranin kryesor).</li>
+      <li>Shtyp <strong>Add</strong> (Shto) lart djathtas.</li>
+    </ol>
+    <p class="muted">Faqja duhet të hapet përmes një lidhjeje HTTPS.</p>
+    <button id="installHelpDone" class="button secondary dialog-done" type="button">Në rregull</button>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="paper_trader.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
