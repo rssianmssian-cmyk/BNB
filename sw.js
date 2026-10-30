@@ -1,4 +1,4 @@
-const CACHE = 'qle-pwa-v7';
+const CACHE = 'qle-pwa-v8';
 const ASSETS = [
   './',
   './index.html',

@@ -12,6 +12,8 @@ const sign = x => x > 0 ? 1 : x < 0 ? -1 : 0;
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEMO_STARTING_BALANCE = 50;
 const DEMO_STORAGE_KEY = 'qle-paper-account-v1';
+const SELECTED_MARKET_REFRESH_MS = 10000;
+const NEWS_REFRESH_MS = 300000;
 
 const state = {
   contracts: [], tickers: new Map(), marks: new Map(), books: new Map(), openInterest: new Map(),
@@ -111,7 +113,7 @@ function renderDemoAccount() {
   $('demoLeverage').value=String(state.demo.leverage);
   $('demoOpenPositions').innerHTML=positions.length
     ?positions.map(position=>`<div class="paper-position"><strong>${escapeHtml(position.side)} ${escapeHtml(position.symbol)}</strong><span>${position.leverage}x · margin ${money(position.margin)} · mark ${fmt(position.markPrice,position.markPrice<1?6:2)} · PnL ${money(position.unrealizedPnl)}</span></div>`).join('')
-    :'<p class="muted">Auto-demo po skanon të gjitha kontratat live; pret sinjal të vlefshëm.</p>';
+    :`<p class="muted">${state.demo.autoEnabled?'Auto-demo po skanon të gjitha kontratat live; pret sinjal të vlefshëm.':'Auto-demo është ndalur; nuk do të hapen pozicione të reja.'}</p>`;
   $('demoOrderHistory').innerHTML=state.demo.trades.length
     ?state.demo.trades.slice(-8).reverse().map(trade=>`<div class="paper-position"><strong>${escapeHtml(trade.type)} ${escapeHtml(trade.side)} ${escapeHtml(trade.symbol)}</strong><span>${fmt(trade.leverage||state.demo.leverage,0)}x · ${fmt(trade.price,trade.price<1?6:2)} · ${new Date(trade.time).toLocaleTimeString()}${trade.reason?` · ${escapeHtml(trade.reason)}`:''}</span></div>`).join('')
     :'<p class="muted">Ende pa urdhra virtualë.</p>';
@@ -466,5 +468,5 @@ window.addEventListener('appinstalled',()=>$('installBtn').classList.add('hidden
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('QLE service worker unavailable',error));
 initDemoAccount();
 connectMarketStream();loadContracts();loadNews();
-state.detailTimer=setInterval(loadSelectedContract,30000);
-setInterval(loadNews,300000);
+state.detailTimer=setInterval(loadSelectedContract,SELECTED_MARKET_REFRESH_MS);
+setInterval(loadNews,NEWS_REFRESH_MS);
